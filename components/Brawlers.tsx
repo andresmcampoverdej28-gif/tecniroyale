@@ -156,19 +156,15 @@ const Brawlers = () => {
         <View className="items-center px-4">
           {loading ? (
             <View className="bg-white rounded-3xl p-10 shadow-xl items-center">
-              <Image 
-                source={require('../../assets/images/dropCarga.png')} 
-                style={{ width: 120, height: 120 }}
-                resizeMode="contain"
-              />
-              <Text className="text-2xl text-gray-700 font-bold mt-4">Buscando a tu main...</Text>
+              <MaterialCommunityIcons name="loading" size={50} color="#374151" />
+              <Text className="text-2xl text-gray-700 font-bold mt-4">Cargando...</Text>
             </View>
           ) : error ? (
             <View className="bg-white rounded-3xl p-10 shadow-xl items-center">
               <Ionicons name="alert-circle" size={50} color="#DC2626" />
               <Text className="text-xl text-red-600 text-center font-bold mt-4">{error}</Text>
             </View>
-          ) : selectedBrawler && (
+          ) : selectedBrawler ? (
             <View className="bg-white rounded-3xl p-8 w-full shadow-xl">
               {/* Brawler ID con Pin */}
               <View className="flex-row items-center justify-end mb-4">
@@ -194,7 +190,7 @@ const Brawlers = () => {
               </View>
               
               {/* Brawler Name */}
-              <Text className="text-5xl font-bold capitalize text-center mb-4 text-gray-900" numberOfLines={2} adjustsFontSizeToFit>
+              <Text className="text-5xl font-bold capitalize text-center mb-4 text-gray-900">
                 {selectedBrawler.name}
               </Text>
               
@@ -206,23 +202,23 @@ const Brawlers = () => {
               </View>
               
               {/* Class and Rarity */}
-              <View className="flex-row justify-center flex-wrap gap-3 mb-6">
+              <View className="flex-row justify-center gap-3 mb-6">
                 <View className="bg-blue-600 px-6 py-3 rounded-full shadow-md flex-row items-center">
                   <MaterialCommunityIcons name="shield-sword" size={20} color="white" />
-                  <Text className="text-white font-bold text-base ml-2" numberOfLines={1}>
+                  <Text className="text-white font-bold capitalize text-lg ml-2">
                     {selectedBrawler.class.name}
                   </Text>
                 </View>
-                <View className={`${getRarityColor(selectedBrawler.rarity.name)} px-6 py-3 rounded-full shadow-md flex-row items-center flex-shrink`}>
+                <View className={`${getRarityColor(selectedBrawler.rarity.name)} px-6 py-3 rounded-full shadow-md flex-row items-center`}>
                   <Ionicons name="diamond" size={20} color="white" />
-                  <Text className="text-white font-bold text-base ml-2" numberOfLines={1}>
+                  <Text className="text-white font-bold capitalize text-lg ml-2">
                     {selectedBrawler.rarity.name}
                   </Text>
                 </View>
               </View>
 
               {/* Star Powers */}
-              {selectedBrawler.starPowers?.length > 0 && (
+              {selectedBrawler.starPowers && selectedBrawler.starPowers.length > 0 && (
                 <View className="mb-6">
                   <View className="flex-row items-center mb-3">
                     <Ionicons name="star" size={24} color="#EAB308" />
@@ -251,7 +247,7 @@ const Brawlers = () => {
               )}
 
               {/* Gadgets */}
-              {selectedBrawler.gadgets?.length > 0 && (
+              {selectedBrawler.gadgets && selectedBrawler.gadgets.length > 0 && (
                 <View className="mb-4">
                   <View className="flex-row items-center mb-3">
                     <MaterialCommunityIcons name="wrench" size={24} color="#8B5CF6" />
@@ -287,7 +283,7 @@ const Brawlers = () => {
                 </Text>
               </View>
             </View>
-          )}
+          ) : null}
         </View>
       </View>
     </ScrollView>
