@@ -1,11 +1,25 @@
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+
+interface StarPower {
+  name: string;
+  description: string;
+  imageUrl: string;
+}
+
+interface Gadget {
+  name: string;
+  description: string;
+  imageUrl: string;
+}
 
 interface Brawler {
   id: number;
   name: string;
   description: string;
   imageUrl2: string;
+  imageUrl3: string;
   class: {
     name: string;
   };
@@ -13,6 +27,8 @@ interface Brawler {
     name: string;
     color: string;
   };
+  starPowers: StarPower[];
+  gadgets: Gadget[];
 }
 
 const Brawlers = () => {
@@ -103,7 +119,8 @@ const Brawlers = () => {
       <View className="min-h-screen p-6 pb-12">
         {/* Header */}
         <View className="items-center mt-12 mb-8">
-          <Text className="text-6xl font-bold text-white mb-2">
+          <MaterialCommunityIcons name="star-shooting" size={50} color="white" />
+          <Text className="text-6xl font-bold text-white mb-2 mt-2">
             Brawl Stars
           </Text>
           <Text className="text-white text-lg">
@@ -113,9 +130,10 @@ const Brawlers = () => {
         
         {/* Search Bar */}
         <View className="w-full mb-8">
-          <View className="bg-white rounded-3xl overflow-hidden shadow-lg">
+          <View className="bg-white rounded-3xl overflow-hidden shadow-lg flex-row items-center px-4">
+            <Ionicons name="search" size={24} color="#9CA3AF" />
             <TextInput
-              className="px-6 py-5 text-lg text-gray-800"
+              className="flex-1 px-4 py-5 text-lg text-gray-800"
               placeholder="Nombre o ID del Brawler..."
               placeholderTextColor="#9CA3AF"
               value={searchText}
@@ -124,11 +142,12 @@ const Brawlers = () => {
             />
           </View>
           <TouchableOpacity 
-            className="bg-yellow-400 rounded-3xl py-4 items-center mt-4 shadow-lg"
+            className="bg-yellow-400 rounded-3xl py-4 items-center mt-4 shadow-lg flex-row justify-center"
             onPress={handleSearch}
           >
-            <Text className="text-gray-800 text-xl font-bold">
-              🔍 Buscar
+            <Ionicons name="search-sharp" size={24} color="#1F2937" />
+            <Text className="text-gray-800 text-xl font-bold ml-2">
+              Buscar
             </Text>
           </TouchableOpacity>
         </View>
@@ -136,18 +155,29 @@ const Brawlers = () => {
         {/* Brawler Card */}
         <View className="items-center px-4">
           {loading ? (
-            <View className="bg-white rounded-3xl p-10 shadow-xl">
-              <Text className="text-2xl text-gray-700 font-bold">⚡ Cargando...</Text>
+            <View className="bg-white rounded-3xl p-10 shadow-xl items-center">
+              <Image 
+                source={require('../../assets/images/dropCarga.png')} 
+                style={{ width: 120, height: 120 }}
+                resizeMode="contain"
+              />
+              <Text className="text-2xl text-gray-700 font-bold mt-4">Buscando a tu main...</Text>
             </View>
           ) : error ? (
-            <View className="bg-white rounded-3xl p-10 shadow-xl">
-              <Text className="text-xl text-red-600 text-center font-bold">{error}</Text>
+            <View className="bg-white rounded-3xl p-10 shadow-xl items-center">
+              <Ionicons name="alert-circle" size={50} color="#DC2626" />
+              <Text className="text-xl text-red-600 text-center font-bold mt-4">{error}</Text>
             </View>
           ) : selectedBrawler ? (
             <View className="bg-white rounded-3xl p-8 w-full shadow-xl">
-              {/* Brawler ID */}
-              <View className="items-end mb-2">
-                <View className="bg-gray-800 px-4 py-2 rounded-full">
+              {/* Brawler ID con Pin */}
+              <View className="flex-row items-center justify-end mb-4">
+                <View className="bg-gray-800 px-4 py-2 rounded-full flex-row items-center">
+                  <Image 
+                    source={{uri: selectedBrawler.imageUrl3}} 
+                    style={{ width: 30, height: 30, marginRight: 8 }}
+                    resizeMode="contain"
+                  />
                   <Text className="text-white text-base font-bold">
                     ID: {selectedBrawler.id}
                   </Text>
@@ -169,28 +199,93 @@ const Brawlers = () => {
               </Text>
               
               {/* Description */}
-              <Text className="text-base text-gray-600 text-center mb-6 px-2">
-                {selectedBrawler.description}
-              </Text>
+              <View className="bg-gray-100 rounded-2xl p-4 mb-6">
+                <Text className="text-base text-gray-600 text-center px-2">
+                  {selectedBrawler.description}
+                </Text>
+              </View>
               
               {/* Class and Rarity */}
-              <View className="flex-row justify-center gap-3 mb-4">
-                <View className="bg-blue-600 px-6 py-3 rounded-full shadow-md">
-                  <Text className="text-white font-bold capitalize text-lg">
+              <View className="flex-row justify-center gap-3 mb-6">
+                <View className="bg-blue-600 px-6 py-3 rounded-full shadow-md flex-row items-center">
+                  <MaterialCommunityIcons name="shield-sword" size={20} color="white" />
+                  <Text className="text-white font-bold capitalize text-lg ml-2">
                     {selectedBrawler.class.name}
                   </Text>
                 </View>
-                <View className={`${getRarityColor(selectedBrawler.rarity.name)} px-6 py-3 rounded-full shadow-md`}>
-                  <Text className="text-white font-bold capitalize text-lg">
+                <View className={`${getRarityColor(selectedBrawler.rarity.name)} px-6 py-3 rounded-full shadow-md flex-row items-center`}>
+                  <Ionicons name="diamond" size={20} color="white" />
+                  <Text className="text-white font-bold capitalize text-lg ml-2">
                     {selectedBrawler.rarity.name}
                   </Text>
                 </View>
               </View>
 
+              {/* Star Powers */}
+              {selectedBrawler.starPowers && selectedBrawler.starPowers.length > 0 && (
+                <View className="mb-6">
+                  <View className="flex-row items-center mb-3">
+                    <Ionicons name="star" size={24} color="#EAB308" />
+                    <Text className="text-2xl font-bold text-gray-800 ml-2">
+                      Habilidades Estelares
+                    </Text>
+                  </View>
+                  {selectedBrawler.starPowers.map((sp, index) => (
+                    <View key={index} className="bg-yellow-50 rounded-2xl p-4 mb-3 flex-row">
+                      <Image 
+                        source={{uri: sp.imageUrl}} 
+                        style={{ width: 50, height: 50, marginRight: 12 }}
+                        resizeMode="contain"
+                      />
+                      <View className="flex-1">
+                        <Text className="text-lg font-bold text-gray-800 mb-1">
+                          {sp.name}
+                        </Text>
+                        <Text className="text-sm text-gray-600">
+                          {sp.description}
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Gadgets */}
+              {selectedBrawler.gadgets && selectedBrawler.gadgets.length > 0 && (
+                <View className="mb-4">
+                  <View className="flex-row items-center mb-3">
+                    <MaterialCommunityIcons name="wrench" size={24} color="#8B5CF6" />
+                    <Text className="text-2xl font-bold text-gray-800 ml-2">
+                      Gadgets
+                    </Text>
+                  </View>
+                  {selectedBrawler.gadgets.map((gadget, index) => (
+                    <View key={index} className="bg-purple-50 rounded-2xl p-4 mb-3 flex-row">
+                      <Image 
+                        source={{uri: gadget.imageUrl}} 
+                        style={{ width: 50, height: 50, marginRight: 12 }}
+                        resizeMode="contain"
+                      />
+                      <View className="flex-1">
+                        <Text className="text-lg font-bold text-gray-800 mb-1">
+                          {gadget.name}
+                        </Text>
+                        <Text className="text-sm text-gray-600">
+                          {gadget.description}
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+
               {/* Total Brawlers */}
-              <Text className="text-center text-gray-500 text-sm mt-4">
-                Total de Brawlers: {brawlers.length}
-              </Text>
+              <View className="bg-gray-100 rounded-2xl p-3 mt-4 flex-row items-center justify-center">
+                <MaterialCommunityIcons name="account-group" size={20} color="#6B7280" />
+                <Text className="text-center text-gray-500 text-sm ml-2 font-semibold">
+                  Total de Brawlers: {brawlers.length}
+                </Text>
+              </View>
             </View>
           ) : null}
         </View>
