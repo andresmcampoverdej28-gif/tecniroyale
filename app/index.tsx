@@ -1,8 +1,8 @@
 import "@/global.css";
-import Pokedex from "@/components/Pokedex";
+import Brawlers from "@/components/Brawlers";
 
 const Index = () => {
-  return <Pokedex />;
+  return <Brawlers />;
 };
 
 export default Index;
