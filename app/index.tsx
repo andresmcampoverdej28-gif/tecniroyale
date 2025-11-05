@@ -1,9 +1,9 @@
-import "@/global.css";
-import { useState } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
 import Brawlers from "@/components/Brawlers";
 import GenAI from "@/components/GenAI";
+import "@/global.css";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 const Index = () => {
   const [vistaActual, setVistaActual] = useState<'brawlers' | 'ai'>('brawlers');
