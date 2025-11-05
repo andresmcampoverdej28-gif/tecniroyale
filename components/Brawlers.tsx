@@ -1,4 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import axios from 'axios';
 import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
@@ -66,29 +67,27 @@ const Brawlers = () => {
     return colors[rarityName] || 'bg-purple-500';
   };
 
-  const fetchBrawlers = () => {
+  const fetchBrawlers = async () => {
     setLoading(true);
     setError('');
     
-    fetch('https://api.brawlify.com/v1/brawlers')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Error al cargar los Brawlers');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setBrawlers(data.list);
-        if (data.list.length > 0) {
-          setSelectedBrawler(data.list[0]);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError('Error al conectar con la API.');
-        setLoading(false);
-        console.error(err);
-      });
+    try {
+      const response = await axios.get('https://api.brawlify.com/v1/brawlers');
+      
+      setBrawlers(response.data.list);
+      if (response.data.list.length > 0) {
+        setSelectedBrawler(response.data.list[0]);
+      }
+      setLoading(false);
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        setError('Error al conectar con la API de Brawl Stars.');
+      } else {
+        setError('Error inesperado al cargar los datos.');
+      }
+      setLoading(false);
+      console.error(err);
+    }
   };
 
   useEffect(() => {
